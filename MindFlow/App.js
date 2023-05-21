@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button,TouchableOpacity,ScrollView } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Video from 'react-native-video';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+// import Video from 'react-native-video';
 import NumericInput from 'react-native-numeric-input';
-import axios from 'axios';
-import { Configuration, OpenAIApi } from "openai";
-import 'react-native-url-polyfill/auto';
-import { Platform } from 'react-native';
-
-import Sound from 'react-native-sound';
+import SoundPlayer from 'react-native-sound-player';
 import RNFetchBlob from 'react-native-fetch-blob';
+// import axios from 'axios';
+// import { Configuration, OpenAIApi } from "openai";
+// import 'react-native-url-polyfill/auto';
+// import { Platform } from 'react-native';
+
+// import Sound from 'react-native-sound';
+// import RNFetchBlob from 'react-native-fetch-blob';
 
 const App = () => {
 
@@ -66,44 +68,39 @@ console.log("HEEEE",response)
     throw new Error(`API request failed with status ${response.status}`);
   }
 
-  const audioUrl = 'https://eastus.tts.speech.microsoft.com/cognitiveservices/v1';
 
-// Create a new instance of Sound
-const sound = new Sound('', null, error => {
-  if (error) {
-    console.log('Error loading sound:', error);
-    return;
-  }
+
+  const audioUrl = 'https://eastus.tts.speech.microsoft.com/cognitiveservices/v1';
 
   // Download the audio file using react-native-fetch-blob
   const dirs = RNFetchBlob.fs.dirs;
   const filePath = `${dirs.DocumentDir}/v1.wav`;
-
+  
   RNFetchBlob.config({
     fileCache: true,
     path: filePath,
   })
     .fetch('GET', audioUrl)
     .then(res => {
-      // Play the downloaded audio file
-      sound.play(success => {
-        if (success) {
+      // Play the downloaded audio file using react-native-sound-player
+      SoundPlayer.playSoundFile(filePath, 'wav')
+        .then(() => {
           console.log('Audio play successful');
-        } else {
-          console.log('Audio play failed');
-        }
-      });
+        })
+        .catch(error => {
+          console.log('Audio play failed:', error);
+        });
     })
     .catch(error => {
       console.log('Error downloading audio:', error);
-    });
-});
+    }); 
+  
   // const audioData = await response.arrayBuffer();
 
   // Now you have audio data, you can play it using React Native sound player or save it to a file.
 };
 
-fetchSpeech('Hello, world!');
+// fetchSpeech('Hello, world!');
   
   const fetchData = async () => {
 
